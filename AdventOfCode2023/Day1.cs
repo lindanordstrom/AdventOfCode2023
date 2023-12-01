@@ -1,19 +1,10 @@
-using System.Diagnostics;
-
 namespace AdventOfCode2023;
 
 public static class Day1
 {
     public static void Part1(string[] input)
     {
-        var sum = 0;
-        foreach (var line in input)
-        {
-            var charArray = line.ToCharArray();
-            var first = charArray.First(char.IsDigit);
-            var last = charArray.Last(char.IsDigit);
-            sum += int.Parse($"{first}{last}");
-        }
+        var sum = input.Sum(line => line.MergeFirstAndLastNumber());
         Console.WriteLine(sum);
     }
 
@@ -21,7 +12,7 @@ public static class Day1
         var sum = 0;
         foreach (var line in input)
         {
-            var charArray = line
+            sum += line
                 .AddNumber("0", "zero")
                 .AddNumber("1", "one")
                 .AddNumber("2", "two")
@@ -32,20 +23,24 @@ public static class Day1
                 .AddNumber("7", "seven")
                 .AddNumber("8", "eight")
                 .AddNumber("9", "nine")
-                .ToCharArray();
-            var first = charArray.First(char.IsDigit);
-            var last = charArray.Last(char.IsDigit);
-
-            sum += int.Parse($"{first}{last}");
+                .MergeFirstAndLastNumber();
         }
         Console.WriteLine(sum);
+    }
+    
+    private static int MergeFirstAndLastNumber(this string line)
+    {
+        var charArray = line.ToCharArray();
+        var first = charArray.First(char.IsDigit);
+        var last = charArray.Last(char.IsDigit);
+        return int.Parse($"{first}{last}");
     }
     
     private static string AddNumber(this string line, string number, string intoString)
     {
         if (!line.Contains(intoString)) return line;
 
-        var indexes = line.AllIndexesOf(intoString).ToList();
+        var indexes = line.AllIndexesOf(intoString);
         foreach (var index in indexes)
         {
             line = line.Insert(index + 2, number);
@@ -54,13 +49,17 @@ public static class Day1
         return line;
     }
     
-    private static IEnumerable<int> AllIndexesOf(this string str, string searchstring)
+    private static List<int> AllIndexesOf(this string line, string searchstring)
     {
-        int minIndex = str.IndexOf(searchstring);
+        var result = new List<int>();
+        var minIndex = line.IndexOf(searchstring);
+        
         while (minIndex != -1)
         {
-            yield return minIndex;
-            minIndex = str.IndexOf(searchstring, minIndex + searchstring.Length);
+            result.Add(minIndex);
+            minIndex = line.IndexOf(searchstring, minIndex + searchstring.Length);
         }
+
+        return result;
     }
 }
