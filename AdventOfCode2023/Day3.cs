@@ -57,7 +57,7 @@ public static class Day3
                 }
             }
         }
-        Console.WriteLine(sum == 553825);
+        Console.WriteLine(sum);
     }
 
     public static void Part2(string[] input)
@@ -101,7 +101,7 @@ public static class Day3
                 
             }
         }
-        Console.WriteLine(sum == 93994191);
+        Console.WriteLine(sum);
     }
 
     private static int? NumberAtPosition(this Dictionary<List<(int, int)>, int> numbers, (int, int) position)
