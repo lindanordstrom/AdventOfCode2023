@@ -13,7 +13,7 @@ public static class Day4
                 .ForEach(_ => points += points == 0 ? 1 : points);
             sum += points;
         });
-        Console.WriteLine(sum == 21821);
+        Console.WriteLine(sum);
     }
 
     public static void Part2(string[] input)
@@ -25,7 +25,7 @@ public static class Day4
                 .ToList()
                 .ForEach(i => cardCounts[cardIndex + i + 1] += cardCounts[cardIndex]);
         });
-        Console.WriteLine(cardCounts.Sum() == 5539496);
+        Console.WriteLine(cardCounts.Sum());
     }
 
     private static void HandleMatchesPerGame(this string[] input, Action<int, int> closure)
