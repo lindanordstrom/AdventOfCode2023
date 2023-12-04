@@ -2,114 +2,85 @@ namespace AdventOfCode2023;
 
 public static class Day3
 {
+    private static int _rows = 0;
+    private static int _lineLength = 0;
     public static void Part1(string[] input)
     {
         var sum = 0;
-        foreach (var (line, lineIndex) in input.WithIndex())
+        input.HandleAdjacentNumbersToSymbols(adjacentNumbers =>
         {
-            var currentNumber = 0;
-            var currentNumberIsAdjacentSymbol = false;
-            foreach (var (character, charIndex) in line.WithIndex())
-            {
-                if (char.IsNumber(character))
-                {
-                    currentNumber = int.Parse($"{currentNumber}{character}");
-                    var adjacentChars = new List<char>();
-                    if (charIndex > 0)
-                        adjacentChars.Add(line[charIndex - 1]);
-                    if (charIndex < line.Length - 1)
-                        adjacentChars.Add(line[charIndex + 1]);
-                    if (lineIndex > 0)
-                    {
-                        var previousLine = input[lineIndex - 1];
-                        adjacentChars.Add(previousLine[charIndex]);
-                        if (charIndex > 0)
-                            adjacentChars.Add(previousLine[charIndex - 1]);
-                        if (charIndex < line.Length - 1)
-                            adjacentChars.Add(previousLine[charIndex + 1]);
-                    }
-                    if (lineIndex < input.Length - 1)
-                    {
-                        var nextLine = input[lineIndex + 1];
-                        adjacentChars.Add(nextLine[charIndex]);
-                        if (charIndex > 0)
-                            adjacentChars.Add(nextLine[charIndex - 1]);
-                        if (charIndex < line.Length - 1)
-                            adjacentChars.Add(nextLine[charIndex + 1]);
-                    }
-                    
-                    if (adjacentChars.Any(adjacentChar => !char.IsNumber(adjacentChar) && adjacentChar.ToString() != "."))
-                    {
-                        currentNumberIsAdjacentSymbol = true;
-                    }
-
-                    if (charIndex != line.Length - 1) continue;
-                    
-                    if (currentNumberIsAdjacentSymbol)
-                        sum += currentNumber;
-                }
-                else
-                {
-                    if (currentNumberIsAdjacentSymbol)
-                        sum += currentNumber;
-                    currentNumber = 0;
-                    currentNumberIsAdjacentSymbol = false;
-                }
-            }
-        }
+            sum += adjacentNumbers.Sum();
+        });
         Console.WriteLine(sum);
     }
 
     public static void Part2(string[] input)
     {
         var sum = 0;
-        var numbers = GetNumbersAndPositions(input);
+        input.HandleAdjacentNumbersToSymbols(adjacentNumbers =>
+        {
+            if (adjacentNumbers.Count == 2)
+                sum += adjacentNumbers.First() * adjacentNumbers.Last();
+        }, explicitCheck: "*");
+        Console.WriteLine(sum);
+    }
+
+    private static void HandleAdjacentNumbersToSymbols(this string[] input, Action<HashSet<int>> closure, string? explicitCheck = null)
+    {
+        _rows = input.Length;
+        _lineLength = input.First().Length;
+        var numbersMap = GetNumbersAndPositions(input);
         
         foreach (var (line, lineIndex) in input.WithIndex())
         {
             foreach (var (character, charIndex) in line.WithIndex())
             {
-                if (char.ToString(character) != "*") continue;
+                if (explicitCheck != null && char.ToString(character) != explicitCheck) continue;
+                if (char.ToString(character) == "." || char.IsNumber(character)) continue;
                 
-                var surroundingNumbers = new List<(int, int)>();
-                var lines = new List<int>();
-                var chars = new List<int>();
-                lines.Add(lineIndex);
-                chars.Add(charIndex);
-                if (lineIndex > 0)
-                    lines.Add(lineIndex - 1);
-                if (lineIndex < input.Length - 1)
-                    lines.Add(lineIndex + 1);
-                if (charIndex > 0)
-                    chars.Add(charIndex - 1);
-                if (charIndex < line.Length - 1)
-                    chars.Add(charIndex + 1);
-
-                foreach (var surroundingLine in lines) 
-                    foreach (var surroundingChar in chars)
-                        surroundingNumbers.Add((surroundingLine, surroundingChar));
-                    
-                var uniqueList = new HashSet<int>();
-                    
-                foreach (var surroundingNumber in surroundingNumbers)
-                    if (numbers.NumberAtPosition(surroundingNumber) is int number && number != 0)
-                        uniqueList.Add(number);
-                    
-
-                if (uniqueList.Count == 2)
-                    sum += uniqueList.First() * uniqueList.Last();
-                
+                var adjacentNumbers = (lineIndex, charIndex).AdjacentNumbers(numbersMap);
+                closure(adjacentNumbers);
             }
         }
-        Console.WriteLine(sum);
-    }
-
-    private static int? NumberAtPosition(this Dictionary<List<(int, int)>, int> numbers, (int, int) position)
-    {
-        return numbers.FirstOrDefault(number => number.Key.Contains(position)).Value;
     }
     
-    public static Dictionary<List<(int, int)>, int> GetNumbersAndPositions(string[] input)
+    private static HashSet<int> AdjacentNumbers(this (int, int) currentPosition, Dictionary<List<(int, int)>, int> numbersMap)
+    {
+        var adjacantNumbers = new HashSet<int>();
+        foreach (var surroundingPosition in currentPosition.SurroundingPositions())
+        {
+            var numberAtPosition = numbersMap.FirstOrDefault(entry => entry.Key.Contains(surroundingPosition)).Value;
+            if (numberAtPosition != 0)
+                adjacantNumbers.Add(numberAtPosition);
+        }
+
+        return adjacantNumbers;
+    }
+    
+    private static List<(int, int)> SurroundingPositions(this ( int lineIndex, int charIndex) currentPosition)
+    {
+        var surroundingNumbers = new List<(int, int)>();
+        var lines = new List<int>();
+        var chars = new List<int>();
+        lines.Add(currentPosition.lineIndex);
+        chars.Add(currentPosition.charIndex);
+        if (currentPosition.lineIndex > 0)
+            lines.Add(currentPosition.lineIndex - 1);
+        if (currentPosition.lineIndex < _rows - 1)
+            lines.Add(currentPosition.lineIndex + 1);
+        if (currentPosition.charIndex > 0)
+            chars.Add(currentPosition.charIndex - 1);
+        if (currentPosition.charIndex < _lineLength - 1)
+            chars.Add(currentPosition.charIndex + 1);
+
+        foreach (var surroundingLine in lines) 
+        foreach (var surroundingChar in chars)
+            surroundingNumbers.Add((surroundingLine, surroundingChar));
+        
+        return surroundingNumbers;
+    }
+
+    private static Dictionary<List<(int, int)>, int> GetNumbersAndPositions(string[] input)
     {
         var numbers = new Dictionary<List<(int, int)>, int>();
         foreach (var (line, lineIndex) in input.WithIndex())
@@ -126,7 +97,6 @@ public static class Day3
 
                     if (charIndex != line.Length - 1) continue;
                         numbers.Add(currentNumberIndexes, currentNumber);
-                    
                 }
                 else
                 {
@@ -137,7 +107,6 @@ public static class Day3
                 }
             }
         }
-        
         return numbers;
     }
 }
