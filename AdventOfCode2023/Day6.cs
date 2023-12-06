@@ -4,7 +4,7 @@ namespace AdventOfCode2023;
 public static class Day6
 {
     public static void Part1(string[] input) => input.CalculateMarginOfErrors();
-    public static void Part2(string[] input) => input.CalculateMarginOfErrors(true);
+    public static void Part2(string[] input) => input.CalculateMarginOfErrors(mergeNumbers: true);
     
     private static List<BigInteger> GetValues(this string line, bool mergeNumbers = false)
     {
