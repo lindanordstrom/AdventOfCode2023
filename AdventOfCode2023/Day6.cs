@@ -1,50 +1,35 @@
 using System.Numerics;
-
 namespace AdventOfCode2023;
 
 public static class Day6
 {
-    public static void Part1(string[] input)
-    {
-        var times = input[0].GetValues();
-        var distanceRecords = input[1].GetValues();
-        Console.WriteLine(CalculateMarginOfErrors(times, distanceRecords));
-    }
-
-    public static void Part2(string[] input)
-    {
-        var times = new List<BigInteger> { BigInteger.Parse(string.Join("", input[0].GetValues())) };
-        var distanceRecords = new List<BigInteger> { BigInteger.Parse(string.Join("", input[1].GetValues())) };
-        Console.WriteLine(CalculateMarginOfErrors(times, distanceRecords));
-    }
+    public static void Part1(string[] input) => input.CalculateMarginOfErrors();
+    public static void Part2(string[] input) => input.CalculateMarginOfErrors(true);
     
-    private static List<BigInteger> GetValues(this string line)
+    private static List<BigInteger> GetValues(this string line, bool mergeNumbers = false)
     {
-        return line
+        var values = line
             .Remove(0, line.IndexOf(":") + 2)
             .Trim()
             .Split(" ")
             .Where(str => str != "")
             .Select(BigInteger.Parse)
             .ToList();
+        return mergeNumbers ? new List<BigInteger> { BigInteger.Parse(string.Join("", values)) } : values;
     }
     
-    private static int CalculateMarginOfErrors(List<BigInteger> times, List<BigInteger> distanceRecords)
+    private static void CalculateMarginOfErrors(this IReadOnlyList<string> input, bool mergeNumbers = false)
     {
+        var times = input[0].GetValues(mergeNumbers);
+        var distanceRecords = input[1].GetValues(mergeNumbers);
         var marginOfError = 1;
         foreach (var (time, index) in times.WithIndex())
         {
-            var waysToWin = 0;
-            foreach (var holdTime in Extensions.BigRange(0, time))
-            {
-                var distance = holdTime * (time - holdTime);
-                if (distance > distanceRecords[index])
-                {
-                    waysToWin++;
-                }
-            }
+            var waysToWin = Extensions.BigRange(0, time)
+                .Select(holdTime => holdTime * (time - holdTime))
+                .Count(distance => distance > distanceRecords[index]);
             marginOfError *= waysToWin;
         }
-        return marginOfError;
+        Console.WriteLine(marginOfError);
     }
 }
