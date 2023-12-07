@@ -4,16 +4,19 @@ internal static class Program
 {
     private static string[] TestInput => 
         """
-        Time:      7  15   30
-        Distance:  9  40  200
+        32T3K 765
+        T55J5 684
+        KK677 28
+        KTJJT 220
+        QQQJA 483
         """
             .Split("\n");
 
-    private static string[] _realInput = InputLoader.Load(6, separator: "\n");
+    private static string[] _realInput = InputLoader.Load(7, separator: "\n");
 
     private static void Main(string[] args)
     {
-        Day6.Part1(_realInput);
-        Day6.Part2(_realInput);
+        Day7.Part1(_realInput);
+        Day7.Part2(_realInput);
     }
 }

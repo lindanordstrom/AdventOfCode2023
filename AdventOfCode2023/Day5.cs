@@ -28,7 +28,7 @@ public static class Day5
             }
             lowestLocationNumber = BigInteger.Min(lowestLocationNumber ?? seedValue, seedValue);
         }
-        Console.WriteLine(lowestLocationNumber == 825516882);
+        Console.WriteLine(lowestLocationNumber);
     }
     
     public static void Part2(string[] input)
