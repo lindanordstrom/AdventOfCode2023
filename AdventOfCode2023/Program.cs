@@ -4,19 +4,24 @@ internal static class Program
 {
     private static string[] TestInput => 
         """
-        32T3K 765
-        T55J5 684
-        KK677 28
-        KTJJT 220
-        QQQJA 483
+        LR
+        
+        11A = (11B, XXX)
+        11B = (XXX, 11Z)
+        11Z = (11B, XXX)
+        22A = (22B, XXX)
+        22B = (22C, 22C)
+        22C = (22Z, 22Z)
+        22Z = (22B, 22B)
+        XXX = (XXX, XXX)
         """
-            .Split("\n");
+            .Split("\n\n");
 
-    private static string[] _realInput = InputLoader.Load(7, separator: "\n");
+    private static string[] _realInput = InputLoader.Load(8, separator: "\n\n");
 
     private static void Main(string[] args)
     {
-        Day7.Part1(_realInput);
-        Day7.Part2(_realInput);
+        Day8.Part1(_realInput);
+        Day8.Part2(_realInput);
     }
 }
