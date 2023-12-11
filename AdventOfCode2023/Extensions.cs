@@ -17,4 +17,14 @@ public static class Extensions
             start++;
         }
     }
+    
+    public static List<int> IndexesOf(this string str, string value) {
+        var indexes = new List<int>();
+        for (var index = 0;; index += value.Length) {
+            index = str.IndexOf(value, index);
+            if (index == -1)
+                return indexes;
+            indexes.Add(index);
+        }
+    }
 }
