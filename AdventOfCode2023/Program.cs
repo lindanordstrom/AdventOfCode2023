@@ -13,6 +13,6 @@ internal static class Program
     private static void Main(string[] args)
     {
         Day15.Part1(_realInput);
-        Day15.Part2(TestInput);
+        Day15.Part2(_realInput);
     }
 }
