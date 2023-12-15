@@ -4,24 +4,15 @@ internal static class Program
 {
     private static string[] TestInput => 
         """
-        O....#....
-        O.OO#....#
-        .....##...
-        OO.#O....O
-        .O.....O#.
-        O.#..O.#.#
-        ..O..#O..O
-        .......O..
-        #....###..
-        #OO..#....
+        rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7
         """
-            .Split("\n");
+            .Split(",");
 
-    private static string[] _realInput = InputLoader.Load(14, separator: "\n");
+    private static string[] _realInput = InputLoader.Load(15, separator: ",");
 
     private static void Main(string[] args)
     {
-        Day14.Part1(_realInput);
-        Day14.Part2(_realInput);
+        Day15.Part1(_realInput);
+        Day15.Part2(TestInput);
     }
 }
