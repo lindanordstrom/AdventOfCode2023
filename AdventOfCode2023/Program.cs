@@ -4,29 +4,24 @@ internal static class Program
 {
     private static string[] TestInput => 
         """
-        #.##..##.
-        ..#.##.#.
-        ##......#
-        ##......#
-        ..#.##.#.
-        ..##..##.
-        #.#.##.#.
-        
-        #...##..#
-        #....#..#
-        ..##..###
-        #####.##.
-        #####.##.
-        ..##..###
-        #....#..#
+        .|...\....
+        |.-.\.....
+        .....|-...
+        ........|.
+        ..........
+        .........\
+        ..../.\\..
+        .-.-/..|..
+        .|....-|.\
+        ..//.|....
         """
-            .Split("\n\n");
+            .Split("\n");
 
-    private static string[] _realInput = InputLoader.Load(13, separator: "\n\n");
+    private static string[] _realInput = InputLoader.Load(16, separator: "\n");
 
     private static void Main(string[] args)
     {
-        Day13.Part1(_realInput);
-        Day13.Part2(TestInput);
+        Day16.Part1(TestInput);
+        Day16.Part2(TestInput);
     }
 }
